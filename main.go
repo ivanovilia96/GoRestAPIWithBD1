@@ -9,6 +9,7 @@ import (
 
 func main() {
 	defer ConnectedDataBase.Close()
+	println("You can work")
 	r := mux.NewRouter()
 	r.HandleFunc("/notifications/page={pageNumber}", getNotifications).Methods(http.MethodGet)
 	r.HandleFunc("/notifications/page={pageNumber}/sort/price={priceSortType}/date={dateSortType}", getNotifications).Methods(http.MethodGet)

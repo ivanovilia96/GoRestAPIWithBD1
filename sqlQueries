@@ -1,0 +1,21 @@
+create database firstDB
+use firstdb
+
+CREATE TABLE Notes(
+ID INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+price int(20) NOT NULL,
+placementData DATE NOT NULL,
+name varchar(200) not null,
+description text,
+PRIMARY KEY(ID) 
+);
+
+CREATE TABLE ImagesForNotes (
+image_id INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+note_id INT UNSIGNED NOT NULL,
+image_data text NOT NULL,
+PRIMARY KEY(image_id),
+FOREIGN KEY (note_id) REFERENCES Notes (ID)
+);
+
+SELECT distinct  n.name, n.price,im.date, n.placementdata FROM notes n, imagesfornotes im where im.note_id = n.id
