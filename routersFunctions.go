@@ -12,6 +12,7 @@ import (
 
 func getNotifications(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var (
 		countNotesOnOnePage int64 = 10
 		from                int64 = 0
@@ -77,6 +78,7 @@ func getNotifications(w http.ResponseWriter, r *http.Request) {
 
 func getNotification(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var (
 		vars                 = mux.Vars(r)
 		optionalFieldsForSql = ""
@@ -167,6 +169,7 @@ type NotificationPut struct {
 
 func putNotification(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
