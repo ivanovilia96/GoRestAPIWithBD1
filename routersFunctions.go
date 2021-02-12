@@ -42,7 +42,7 @@ func getNotifications(w http.ResponseWriter, r *http.Request) {
 
 	var sqlStatement string
 	sqlStatement = "SELECT  n.name, n.price, im.image_data, n.placementdata, n.id FROM notes n, imagesfornotes im " +
-		"where im.note_id = n.id group by id order by n.price" + priceSortType +
+		"where im.note_id = n.id group by id, placementdata order by n.price" + priceSortType +
 		", n.placementdata " + dateSortType + " limit " + strconv.FormatInt(from, 10) + `,` + strconv.FormatInt(to, 10)
 
 	results, err := ConnectedDataBase.Query(sqlStatement)
@@ -190,7 +190,7 @@ func putNotification(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message": "Наименование обьявления не должно быть более 200 символов"}`))
 	} else {
 		sqlQuery := "insert into notes(price,name,placementdata,description) values (\"" + strconv.Itoa(bodyInStructure.Price) + "\" ," +
-			"\"" + bodyInStructure.Name + "\", \"" + (time.Now().Format("2006-02-01")) + "\",\"" + bodyInStructure.Description + "\")"
+			"\"" + bodyInStructure.Name + "\", \"" + (time.Now().Format("2006-01-02")) + "\",\"" + bodyInStructure.Description + "\")"
 
 		res, err := ConnectedDataBase.Exec(sqlQuery)
 		if err != nil {

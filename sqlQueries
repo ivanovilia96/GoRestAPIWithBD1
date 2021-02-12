@@ -17,5 +17,3 @@ image_data text NOT NULL,
 PRIMARY KEY(image_id),
 FOREIGN KEY (note_id) REFERENCES Notes (ID)
 );
-
-SELECT distinct  n.name, n.price,im.date, n.placementdata FROM notes n, imagesfornotes im where im.note_id = n.id
