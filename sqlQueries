@@ -10,10 +10,16 @@ description text,
 PRIMARY KEY(ID) 
 );
 
-CREATE TABLE ImagesForNotes (
-image_id INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+CREATE TABLE ImagesForNotes
+( image_id INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
 note_id INT UNSIGNED NOT NULL,
-image_data text NOT NULL,
-PRIMARY KEY(image_id),
-FOREIGN KEY (note_id) REFERENCES Notes (ID)
+image_data text ,
+  CONSTRAINT any
+  PRIMARY KEY(image_id),
+    FOREIGN KEY (note_id)
+    REFERENCES notes (id)
+    ON DELETE CASCADE
 );
+
+
+ insert into ImagesForNotes (note_id ) values (2)
