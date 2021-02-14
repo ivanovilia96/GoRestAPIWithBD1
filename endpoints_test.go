@@ -16,11 +16,6 @@ type RequestData struct {
 	Data []getNoteResp
 }
 
-var (
-	uniqueName        = "QSA|?FSA/.L:A||sf]}"
-	onWhatIdWeHaveRow = "67"
-)
-
 func TestGetNotificationsWithoutSort(t *testing.T) {
 	req, err := http.NewRequest("GET", "/notifications/page=1", nil)
 	if err != nil {
@@ -44,20 +39,20 @@ func TestGetNotificationsWithoutSort(t *testing.T) {
 
 }
 
-//сделал тут через имя потому что нет доступа к LastInsertId т.к. он не возвращается из PutNotification fun
-func deleteRowAfterTest() {
-	_, err := ConnectedDataBase.Exec("DELETE FROM notes WHERE name=\"" + uniqueName + "\";")
+func deleteRowAfterTest(id string) {
+	sqlQuery := "DELETE FROM notes WHERE id=" + id + ";"
+	_, err := ConnectedDataBase.Exec(sqlQuery)
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func createRowInTableForTest(t *testing.T) {
+func createRowInTableForTest(t *testing.T) string {
 	group := getNoteResp{
-		uniqueName,
+		"anyName",
 		[]sql.NullString{},
-		19,
-		"desc",
+		322,
+		"anyDesc",
 	}
 
 	data, err := json.Marshal(group)
@@ -79,23 +74,26 @@ func createRowInTableForTest(t *testing.T) {
 			status, http.StatusOK)
 	}
 
+	// нет доступа к LastInsertId т.к. он не возвращается из PutNotification fun это для того, что бы можно было удалить по id после окончания тестов
+	id := strings.Split(rr.Body.String(), "\"Id\":")
+	id = strings.Split(id[1], ",\"Status\":")
+
 	if !strings.Contains(rr.Body.String(), "\"Status\":202") {
 		t.Errorf("handler returned unexpected body: got %v want containing string \"Status\":202 ",
 			rr.Body.String())
 	}
+	return id[0]
 }
 
 func TestPutNotification(t *testing.T) {
-	createRowInTableForTest(t)
-	deleteRowAfterTest()
-
+	deleteRowAfterTest(createRowInTableForTest(t))
 }
 
 func TestGetNotificationsWithSort(t *testing.T) {
 	// добавляем колонку для теста c помощью фактически вызова другой функции ( она уже вызывается до, да, но может переместиться )
 	// это сделно для проверки, что возвращается хотя бы запись, (мы её ниже добавляем)
-	createRowInTableForTest(t)
-	defer deleteRowAfterTest()
+	id := createRowInTableForTest(t)
+	defer deleteRowAfterTest(id)
 
 	// наш тест
 	req, err := http.NewRequest("GET", "/notifications/page=1/sort/price=max-to-min/date=max-to-min", nil)
@@ -123,7 +121,9 @@ func TestGetNotificationsWithSort(t *testing.T) {
 }
 
 func TestGetNotificationWithoutOptionalFields(t *testing.T) {
-	req, err := http.NewRequest("GET", "/notification/"+onWhatIdWeHaveRow, nil)
+	id := createRowInTableForTest(t)
+	defer deleteRowAfterTest(id)
+	req, err := http.NewRequest("GET", "/notification/"+id, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,7 +150,9 @@ func TestGetNotificationWithoutOptionalFields(t *testing.T) {
 }
 
 func TestGetNotificationWithOptionalFields(t *testing.T) {
-	req, err := http.NewRequest("GET", "/notification/"+onWhatIdWeHaveRow+"/optionalFields=description,allImages", nil)
+	id := createRowInTableForTest(t)
+	defer deleteRowAfterTest(id)
+	req, err := http.NewRequest("GET", "/notification/"+id+"/optionalFields=description,allImages", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
