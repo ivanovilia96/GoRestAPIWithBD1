@@ -140,7 +140,7 @@ func TestGetNotificationWithoutOptionalFields(t *testing.T) {
 	}{}
 	err = json.Unmarshal(requestBody, &bodyInStructure)
 	if bodyInStructure.Data.Name == "" || bodyInStructure.Data.Price == 0 {
-		t.Errorf("data isn`t return, ВОЗМОЖНО ВЫ ЗАБЫЛИ ПОМЕНЯТЬ ПЕРЕМЕННУЮ onWhatIdWeHaveRow на ваш id")
+		t.Errorf("data isn`t return")
 	}
 
 	if recorder.Code != http.StatusOK {
@@ -170,7 +170,7 @@ func TestGetNotificationWithOptionalFields(t *testing.T) {
 	err = json.Unmarshal(requestBody, &bodyInStructure)
 
 	if bodyInStructure.Data.Name == "" || bodyInStructure.Data.Price == 0 {
-		t.Errorf("data isn`t return, ВОЗМОЖНО ВЫ ЗАБЫЛИ ПОМЕНЯТЬ ПЕРЕМЕННУЮ onWhatIdWeHaveRow на ваш id")
+		t.Errorf("data isn`t return")
 	}
 
 	if recorder.Code != http.StatusOK {
