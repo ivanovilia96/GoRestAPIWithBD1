@@ -27,11 +27,11 @@ func TestGetNotificationsWithoutSort(t *testing.T) {
 	router.HandleFunc("/notifications/page={pageNumber}", GetNotifications)
 	router.ServeHTTP(recorder, req)
 
-	// -> МОЖНО ПРОВЕРИТЬ ОТВЕТ, ( внизу пример как получить данные и структура ) , но,
+	// -> МОЖНО ПРОВЕРИТЬ ОТВЕТ, но,
 	// тогда придется сначала теста вызывать функцию добавления в бд данных Х раз (что бы данные возвратились, а то если БД пустая, то ошибка неожиданная будет)
 	//+ как то искать именно эти данные которые мы добавили, ведь в данном запросе допустим, возвращается список, то есть по нему итерироваться нужно и тд,
 	//а после теста удаления данных из бд.
-	//возможно  есть какой то более простой способ протестировать тело ответа ( может тестовые бд онлайн какие нибудь существуют)
+	//возможно  есть какой то более простой способ протестировать тело ответа ( может тестовые бд онлайн какие нибудь существуют) или можно mock сделать
 
 	if recorder.Code != http.StatusOK {
 		t.Error("should work")
@@ -91,7 +91,7 @@ func TestPutNotification(t *testing.T) {
 
 func TestGetNotificationsWithSort(t *testing.T) {
 	// добавляем колонку для теста c помощью фактически вызова другой функции ( она уже вызывается до, да, но может переместиться )
-	// это сделно для проверки, что возвращается хотя бы запись, (мы её ниже добавляем)
+	// это сделно для проверки, что возвращается хотя бы запись, мы её ниже добавляем а потом удаляем
 	id := createRowInTableForTest(t)
 	defer deleteRowAfterTest(id)
 
@@ -123,6 +123,7 @@ func TestGetNotificationsWithSort(t *testing.T) {
 func TestGetNotificationWithoutOptionalFields(t *testing.T) {
 	id := createRowInTableForTest(t)
 	defer deleteRowAfterTest(id)
+
 	req, err := http.NewRequest("GET", "/notification/"+id, nil)
 	if err != nil {
 		t.Fatal(err)
