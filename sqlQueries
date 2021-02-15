@@ -3,7 +3,7 @@ use firstdb
 
 CREATE TABLE Notes(
 ID INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-price int(20) NOT NULL,
+price int NOT NULL,
 placementData DATE NOT NULL,
 name varchar(200) not null,
 description text,
@@ -20,6 +20,3 @@ image_data text ,
     REFERENCES notes (id)
     ON DELETE CASCADE
 );
-
-
- insert into ImagesForNotes (note_id ) values (2)

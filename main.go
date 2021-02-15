@@ -9,7 +9,7 @@ import (
 
 func main() {
 	defer ConnectedDataBase.Close()
-	println("You can work")
+	println("You can work on http://localhost:8080/ ")
 	r := mux.NewRouter()
 	r.HandleFunc("/notifications/page={pageNumber}", GetNotifications).Methods(http.MethodGet)
 	r.HandleFunc("/notifications/page={pageNumber}/sort/price={priceSortType}/date={dateSortType}", GetNotifications).Methods(http.MethodGet)
