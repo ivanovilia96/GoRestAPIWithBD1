@@ -65,11 +65,7 @@ func GetNotifications(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resultDataJson, err := json.Marshal(
-		struct {
-			Data []getNoteResp
-		}{
-			Data: resultData,
-		},
+		resultData,
 	)
 	if err != nil {
 		panic(err.Error())
@@ -106,28 +102,29 @@ func GetNotification(w http.ResponseWriter, r *http.Request) {
 	if needAllImages {
 		sqlStatementForAllImages := "select ImagesForNotes.image_data from ImagesForNotes where ImagesForNotes.note_id = " + vars["id"]
 		if optionalFieldsForSql == "" {
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData)
+			oneNote.ImageData = []sql.NullString{{"", true}}
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData[0])
 			if err != nil {
-				panic("AAAAAAAAAAAAAAAAAA " + err.Error())
+				panic(err.Error())
 			}
 		} else {
 			oneNote.ImageData = []sql.NullString{{"", true}}
 			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData[0])
 			if err != nil {
-				panic("BBBBBBBBBBBBBBB " + err.Error())
+				panic(err.Error())
 			}
 		}
 
 		results, err := ConnectedDataBase.Query(sqlStatementForAllImages)
 		if err != nil {
-			panic("CCCCCCCCCCCCCC " + err.Error())
+			panic(err.Error())
 		}
 		var localStoreData []sql.NullString
 		for results.Next() {
 			var localStr sql.NullString
 			err = results.Scan(&localStr)
 			if err != nil {
-				panic("DDDDDDDDDDDDDDDD " + err.Error())
+				panic(err.Error())
 			}
 			localStoreData = append(localStoreData, localStr)
 

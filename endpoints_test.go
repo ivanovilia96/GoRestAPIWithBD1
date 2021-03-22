@@ -14,10 +14,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type RequestData struct {
-	Data []getNoteResp
-}
-
 func TestGetNotificationsWithoutSort(t *testing.T) {
 	req, err := http.NewRequest("GET", "/notifications/page=1", nil)
 	if err != nil {
@@ -110,11 +106,11 @@ func TestGetNotificationsWithSort(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	bodyInStructure := RequestData{}
+	var bodyInStructure []getNoteResp
 	err = json.Unmarshal(requestBody, &bodyInStructure)
 
-	if len(bodyInStructure.Data) == 0 {
-		t.Errorf("data isn`t return")
+	if len(bodyInStructure) == 0 {
+		t.Errorf("data isn`t return TestGetNotificationsWithSort")
 	}
 
 	if recorder.Code != http.StatusOK {
@@ -143,7 +139,7 @@ func TestGetNotificationWithoutOptionalFields(t *testing.T) {
 	}{}
 	err = json.Unmarshal(requestBody, &bodyInStructure)
 	if bodyInStructure.Data.Name == "" || bodyInStructure.Data.Price == 0 {
-		t.Errorf("data isn`t return")
+		t.Errorf("data isn`t return TestGetNotificationWithoutOptionalFields")
 	}
 
 	if recorder.Code != http.StatusOK {
@@ -174,7 +170,7 @@ func TestGetNotificationWithOptionalFields(t *testing.T) {
 	err = json.Unmarshal(requestBody, &bodyInStructure)
 
 	if bodyInStructure.Data.Name == "" || bodyInStructure.Data.Price == 0 {
-		t.Errorf("data isn`t return")
+		t.Errorf("data isn`t return TestGetNotificationWithOptionalFields")
 	}
 
 	if recorder.Code != http.StatusOK {

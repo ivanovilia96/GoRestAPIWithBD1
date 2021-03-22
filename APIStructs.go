@@ -1,6 +1,8 @@
 package main
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type NotificationPut struct {
 	Name        string
@@ -10,10 +12,10 @@ type NotificationPut struct {
 }
 
 type getNoteResp struct {
-	Name        string
-	ImageData   []sql.NullString
-	Price       int
-	Description string
+	Name        string           `json:"name"`
+	ImageData   []sql.NullString `json:"imageData"`
+	Price       int              `json:"price"`
+	Description string           `json:"description,omitempty"`
 }
 
 // решение использовать данный тип NullString вызвано тем, что если пользователь не добавит не 1 картинки, то  будет выброшена ошибка связанная с null возвращаемым типо данных
