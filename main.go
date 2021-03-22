@@ -1,15 +1,16 @@
 package main
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	defer ConnectedDataBase.Close()
-	println("You can work on http://localhost:8080/ ")
+	println("You can work on http://localhost:8081/ ")
 	r := mux.NewRouter()
 	r.HandleFunc("/notifications/page={pageNumber}", GetNotifications).Methods(http.MethodGet)
 	r.HandleFunc("/notifications/page={pageNumber}/sort/price={priceSortType}/date={dateSortType}", GetNotifications).Methods(http.MethodGet)

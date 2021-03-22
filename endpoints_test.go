@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 type RequestData struct {
@@ -153,7 +155,8 @@ func TestGetNotificationWithoutOptionalFields(t *testing.T) {
 func TestGetNotificationWithOptionalFields(t *testing.T) {
 	id := createRowInTableForTest(t)
 	defer deleteRowAfterTest(id)
-	req, err := http.NewRequest("GET", "/notification/"+id+"/optionalFields=description,allImages", nil)
+	fmt.Printf("/notification/%v/optionalFields=description,allImages", id[1:len(id)-1])
+	req, err := http.NewRequest("GET", fmt.Sprintf("/notification/%v/optionalFields=description,allImages", id[1:len(id)-1]), nil)
 	if err != nil {
 		t.Fatal(err)
 	}

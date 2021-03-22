@@ -3,12 +3,13 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func GetNotifications(w http.ResponseWriter, r *http.Request) {
@@ -107,25 +108,26 @@ func GetNotification(w http.ResponseWriter, r *http.Request) {
 		if optionalFieldsForSql == "" {
 			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData)
 			if err != nil {
-				err.Error()
+				panic("AAAAAAAAAAAAAAAAAA " + err.Error())
 			}
 		} else {
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData)
+			oneNote.ImageData = []sql.NullString{{"", true}}
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData[0])
 			if err != nil {
-				err.Error()
+				panic("BBBBBBBBBBBBBBB " + err.Error())
 			}
 		}
 
 		results, err := ConnectedDataBase.Query(sqlStatementForAllImages)
 		if err != nil {
-			panic(err.Error())
+			panic("CCCCCCCCCCCCCC " + err.Error())
 		}
 		var localStoreData []sql.NullString
 		for results.Next() {
 			var localStr sql.NullString
 			err = results.Scan(&localStr)
 			if err != nil {
-				panic(err.Error())
+				panic("DDDDDDDDDDDDDDDD " + err.Error())
 			}
 			localStoreData = append(localStoreData, localStr)
 
@@ -136,12 +138,14 @@ func GetNotification(w http.ResponseWriter, r *http.Request) {
 		if vars["fields"] != "" {
 			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData[0])
 			if err != nil {
-				err.Error()
+				panic(err.Error())
+
 			}
 		} else {
 			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData[0])
 			if err != nil {
-				err.Error()
+				panic(err.Error())
+
 			}
 		}
 
@@ -168,10 +172,8 @@ func PutNotification(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 	bodyInStructure := NotificationPut{}
 	err = json.Unmarshal(requestBody, &bodyInStructure)
-
 	if err != nil {
 		panic(err)
 	}
@@ -212,14 +214,16 @@ func PutNotification(w http.ResponseWriter, r *http.Request) {
 		}
 		_, err = ConnectedDataBase.Exec(queryForImages)
 		if err != nil {
-			err.Error()
+			panic(err.Error())
+
 		}
 		dataJson, err := json.Marshal(struct {
 			Id     string
 			Status int
 		}{strconv.Itoa(int(id)), http.StatusAccepted})
 		if err != nil {
-			err.Error()
+			panic(err.Error())
+
 		}
 		w.WriteHeader(http.StatusAccepted)
 		w.Write(dataJson)
