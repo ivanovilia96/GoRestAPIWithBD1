@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -48,7 +47,7 @@ func deleteRowAfterTest(id string) {
 func createRowInTableForTest(t *testing.T) string {
 	group := getNoteResp{
 		"anyName",
-		[]sql.NullString{},
+		[]NullString{},
 		322,
 		"anyDesc",
 	}

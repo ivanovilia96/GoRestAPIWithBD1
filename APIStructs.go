@@ -2,7 +2,17 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 )
+
+type NullString sql.NullString
+
+func (x *NullString) MarshalJSON() ([]byte, error) {
+	if !x.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(x.String)
+}
 
 type NotificationPut struct {
 	Name        string
@@ -12,10 +22,10 @@ type NotificationPut struct {
 }
 
 type getNoteResp struct {
-	Name        string           `json:"name"`
-	ImageData   []sql.NullString `json:"imageData"`
-	Price       int              `json:"price"`
-	Description string           `json:"description,omitempty"`
+	Name        string       `json:"name"`
+	ImageData   []NullString `json:"imageData"`
+	Price       int          `json:"price"`
+	Description string       `json:"description,omitempty"`
 }
 
 // решение использовать данный тип NullString вызвано тем, что если пользователь не добавит не 1 картинки, то  будет выброшена ошибка связанная с null возвращаемым типо данных

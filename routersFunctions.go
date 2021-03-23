@@ -56,11 +56,12 @@ func GetNotifications(w http.ResponseWriter, r *http.Request) {
 			oneRowDB getNoteResp
 		)
 
-		oneRowDB.ImageData = append(oneRowDB.ImageData, sql.NullString{})
-		err = results.Scan(&oneRowDB.Name, &oneRowDB.Price, &oneRowDB.ImageData[0])
+		var imageData sql.NullString
+		err = results.Scan(&oneRowDB.Name, &oneRowDB.Price, &imageData)
 		if err != nil {
 			panic(err.Error())
 		}
+		oneRowDB.ImageData = append(oneRowDB.ImageData, NullString(imageData))
 		resultData = append(resultData, oneRowDB)
 	}
 
@@ -101,50 +102,50 @@ func GetNotification(w http.ResponseWriter, r *http.Request) {
 
 	if needAllImages {
 		sqlStatementForAllImages := "select ImagesForNotes.image_data from ImagesForNotes where ImagesForNotes.note_id = " + vars["id"]
+		var imageData sql.NullString
 		if optionalFieldsForSql == "" {
-			oneNote.ImageData = []sql.NullString{{"", true}}
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData[0])
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &imageData)
 			if err != nil {
 				panic(err.Error())
 			}
 		} else {
-			oneNote.ImageData = []sql.NullString{{"", true}}
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData[0])
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &imageData)
 			if err != nil {
 				panic(err.Error())
 			}
+			oneNote.ImageData = append(oneNote.ImageData, NullString(imageData))
 		}
 
 		results, err := ConnectedDataBase.Query(sqlStatementForAllImages)
 		if err != nil {
 			panic(err.Error())
 		}
-		var localStoreData []sql.NullString
+		var localStoreData []NullString
 		for results.Next() {
 			var localStr sql.NullString
 			err = results.Scan(&localStr)
 			if err != nil {
 				panic(err.Error())
 			}
-			localStoreData = append(localStoreData, localStr)
-
+			localStoreData = append(localStoreData, NullString(localStr))
 		}
 		oneNote.ImageData = localStoreData
 	} else {
-		oneNote.ImageData = append(oneNote.ImageData, sql.NullString{})
+		var imageData sql.NullString
 		if vars["fields"] != "" {
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &oneNote.ImageData[0])
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.Description, &imageData)
 			if err != nil {
 				panic(err.Error())
 
 			}
 		} else {
-			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &oneNote.ImageData[0])
+			err := ConnectedDataBase.QueryRow(sqlStatement).Scan(&oneNote.Name, &oneNote.Price, &imageData)
 			if err != nil {
 				panic(err.Error())
 
 			}
 		}
+		oneNote.ImageData = append(oneNote.ImageData, NullString(imageData))
 
 	}
 
